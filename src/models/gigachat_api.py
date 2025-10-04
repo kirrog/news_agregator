@@ -4,7 +4,7 @@ import time
 from gigachat import GigaChat
 from gigachat.models import Chat, Messages, MessagesRole
 
-with open("./gigachat_secrets.json", "r", encoding="utf-8") as f:
+with open("./models/gigachat_secrets_2.json", "r", encoding="utf-8") as f:
     gigachat_secrets = json.load(f)
 
 

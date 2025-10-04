@@ -27,15 +27,22 @@ class CompanyClassificator:
         ]
         response_giga_model = self.gpt_model.process(messages)
         r = re.sub("'", "\"", response_giga_model)
-        j = json.loads(r)
-        for company in j:
-            company_name = company["company"]
-            ticker = ""
-            if company_name in self.tickers_dict:
-                ticker = self.tickers_dict[company_name]
-            if company_name.lower() in self.tickers_dict:
-                ticker = self.tickers_dict[company_name.lower()]
-            company["ticker"] = ticker
+        r = " ".join(r.split())
+        if r == "":
+            r = "[]"
+        try:
+            j = json.loads(r)
+            for company in j:
+                company_name = company["company"]
+                ticker = ""
+                if company_name in self.tickers_dict:
+                    ticker = self.tickers_dict[company_name]
+                if company_name.lower() in self.tickers_dict:
+                    ticker = self.tickers_dict[company_name.lower()]
+                company["ticker"] = ticker
+        except json.decoder.JSONDecodeError as e:
+            print(e)
+            j = []
         return j
 
     def extract_industry(self, text: str) -> List[str]:
@@ -62,7 +69,7 @@ class CompanyClassificator:
         news_struct_result = NewsStructCompany(
             news_struct,
             [IndustryEntity(x["type"], x["forecast"]) for x in industry],
-            [CompaniesEntity(x["type"], x["forecast"]) for x in company],
+            [CompaniesEntity(x["company"], x["forecast"]) for x in company],
             [x["ticker"] for x in company]
         )
         return news_struct_result

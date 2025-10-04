@@ -27,6 +27,24 @@ class NEExtractor:
         j = json.loads(r)
         return j
 
+    def extract(self, text: str) -> List[str]:
+        messages = [
+            {
+                "role": "system",
+                "content": "Тебе дан текст новости, извлеки из него имена, "
+                           "географические и политические названия, названия компаний и прочие. "
+                           "Ответ дай в формате списка словарей: '[{'type': 'geo', 'text': 'Russian Federation'}]'"
+            },
+            {
+                "role": "user",
+                "content": f"Текст новости: {text}"
+            }
+        ]
+        response_giga_model = self.gpt_model.process(messages)
+        r = re.sub("'", "\"", response_giga_model)
+        j = json.loads(r)
+        return j
+
     def extract_ne_from_news(self, news_struct: NewsStruct) -> NewsStructNE:
         text = news_struct.header + news_struct.text
         ne_list = self.extract(text)

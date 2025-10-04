@@ -1,3 +1,6 @@
+# Запуск проекта
+streamlit run GUI.py
+
 # news_agregator
 
 Новости отражают реальность
